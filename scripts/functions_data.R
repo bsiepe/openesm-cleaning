@@ -1,3 +1,15 @@
+# Package conflict resolution ------------------------------------------------
+# conflicted turns ambiguous function calls into errors rather than silently
+# using whichever package happened to load last.
+library(conflicted)
+conflict_prefer("filter",    "dplyr", quiet = TRUE)
+conflict_prefer("select",    "dplyr", quiet = TRUE)
+conflict_prefer("arrange",   "dplyr", quiet = TRUE)
+conflict_prefer("mutate",    "dplyr", quiet = TRUE)
+conflict_prefer("summarise", "dplyr", quiet = TRUE)
+conflict_prefer("rename",    "dplyr", quiet = TRUE)
+conflict_prefer("count",     "dplyr", quiet = TRUE)
+
 # URL of the master metadata Google Sheet
 METADATA_URL <- "https://docs.google.com/spreadsheets/d/1ALGCq_jN6I4dcjWYQ_LQe9o52DGJItwdu9fCkwOh6fg/edit?pli=1&gid=0#gid=0"
 
