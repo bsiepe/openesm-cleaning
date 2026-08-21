@@ -44,6 +44,45 @@
       "type": ["string", "null"],
       "description": "Zenodo DOI for the harmonized dataset archive"
     },
+    "dataset_version": {
+      "type": ["string", "null"],
+      "description": "Semantic version of the cleaned dataset (e.g. '1.0.0')",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "changelog": {
+      "description": "List of versioned changes to the dataset. Canonical format is an array; legacy entries may use an empty object.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["date", "description", "type", "dataset_version"],
+            "additionalProperties": false,
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Date of the change (ISO 8601, e.g. '2026-04-27')"
+              },
+              "description": {
+                "type": "string",
+                "description": "Summary of the change"
+              },
+              "type": {
+                "type": "string",
+                "description": "Category of change",
+                "enum": ["data", "metadata"]
+              },
+              "dataset_version": {
+                "type": "string",
+                "description": "Version after this change"
+              }
+            }
+          }
+        },
+        { "type": "object", "maxProperties": 0 },
+        { "type": "null" }
+      ]
+    },
     "link_to_data": {
       "type": ["string", "null"],
       "description": "URL to the original (raw) data repository"
