@@ -132,31 +132,21 @@ df$beep <- NA
 
 
 
+# Read metadata -----------------------------------------------------------
+# loaded before checking so check_data() can cross-check data against metadata
+meta_data <- read_sheet(METADATA_URL)
+dataset_info <- meta_data |>
+  filter(dataset_id == "0025")
+variable_data <- read_sheet(pull(dataset_info, "Coding File URL"))
+
 # Check requirements ------------------------------------------------------
-# if check_data runs without messages, the data are clean
-# and should be saved as a .tsv file
-check_results <- check_data(df)
+# errors abort; warnings flag likely problems but still allow saving
+check_results <- check_data(df, dataset_info, variable_data)
 
 # if it returns "Data are clean.", save the data
-# Enter data set ID here
 if(check_results == "Data are clean."){
   write_tsv(df, here("data", "clean", "0025_hasselhorn_ts.tsv"))
 }
 
-
 # Create metadata ---------------------------------------------------------
-metadata_url <- "https://docs.google.com/spreadsheets/d/1ALGCq_jN6I4dcjWYQ_LQe9o52DGJItwdu9fCkwOh6fg/edit?pli=1&gid=0#gid=0"
-meta_data <- read_sheet(metadata_url)
-
-
-# Enter dataset ID here
-sheet_url <- meta_data |>
-  filter(dataset_id == "0025") |>
-  pull("Coding File URL")
-
-variable_data <- read_sheet(sheet_url)
-
-meta_json <- create_metadata_json("0025") |>
-  toJSON(pretty = TRUE, auto_unbox = TRUE)
-
-write(meta_json, here("data", "metadata", "0025_hasselhorn_metadata.json"))
+write_metadata("0025", meta_data = meta_data, variable_data = variable_data)

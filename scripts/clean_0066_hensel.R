@@ -139,34 +139,21 @@ df <- df |>
 df <- df |>
   select(!q_recaptcha_assessment_name)
 
+# Read metadata -----------------------------------------------------------
+# loaded before checking so check_data() can cross-check data against metadata
+meta_data <- read_sheet(METADATA_URL)
+dataset_info <- meta_data |>
+  filter(dataset_id == "0066")
+variable_data <- read_sheet(pull(dataset_info, "Coding File URL"))
+
 # Check requirements ------------------------------------------------------
-# if check_data runs without messages, the data are clean
-# and should be saved as a .tsv file
-check_results <- check_data(df)
-check_results
+# errors abort; warnings flag likely problems but still allow saving
+check_results <- check_data(df, dataset_info, variable_data)
 
 # if it returns "Data are clean.", save the data
-# Enter data set ID here::here
-if (check_results == "Data are clean.") {
-  write_tsv(df, here::here("data", "clean", "0066_hensel_ts.tsv"))
+if(check_results == "Data are clean."){
+  write_tsv(df, here("data", "clean", "0066_hensel_ts.tsv"))
 }
 
-
 # Create metadata ---------------------------------------------------------
-metadata_url <- "https://docs.google.com/spreadsheets/d/1ALGCq_jN6I4dcjWYQ_LQe9o52DGJItwdu9fCkwOh6fg/edit?gid=0#gid=0"
-meta_data <- read_sheet(metadata_url)
-
-
-# Enter dataset ID here::here
-sheet_url <- meta_data |>
-  dplyr::filter(dataset_id == "0066") |>
-  dplyr::pull("Coding File URL")
-
-variable_data <- read_sheet(sheet_url)
-
-meta_json <- create_metadata_json("0066") |>
-  toJSON(pretty = TRUE, auto_unbox = TRUE)
-
-write(meta_json,
-      here::here("data", "metadata", "0066_hensel_metadata.json"))
-
+write_metadata("0066", meta_data = meta_data, variable_data = variable_data)
