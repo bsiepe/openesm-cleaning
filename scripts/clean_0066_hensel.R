@@ -130,7 +130,14 @@ df <- df |>
                 .after = day)
 
 
-# remove
+# remove text and age columns
+df <- df |>
+  select(!ends_with("_text")) |>
+  select(!dayage)
+
+# remove irrelevant column
+df <- df |>
+  select(!q_recaptcha_assessment_name)
 
 # Check requirements ------------------------------------------------------
 # if check_data runs without messages, the data are clean

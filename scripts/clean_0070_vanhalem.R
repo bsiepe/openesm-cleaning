@@ -111,6 +111,10 @@ df <- df |>
   dplyr::mutate(beep = dplyr::row_number()) |>
   dplyr::ungroup()
 
+# remove non self-report item
+df <- df |>
+  select(!c(location, event))
+
 # Check requirements ------------------------------------------------------
 # if check_data runs without messages, the data are clean
 # and should be saved as a .tsv file
